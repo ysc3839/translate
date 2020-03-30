@@ -134,11 +134,19 @@ class rcfile(base.TranslationStore):
         self.filename = getattr(inputfile, 'name', '')
         self.lang = lang
         self.sublang = sublang
+        self._unitnames = set()
         if inputfile is not None:
             rcsrc = inputfile.read().decode(self.encoding)
             inputfile.close()
             rcsrc = rcsrc.replace('\r', '')
             self.parse(rcsrc)
+
+    def addunit(self, unit):
+        if unit.name in self._unitnames:
+            unit.name += '_'
+            return self.addunit(unit)
+        self._unitnames.add(unit.name)
+        return super(rcfile, self).addunit(unit)
 
     def parse(self, rcsrc):
         """Read the source of a .rc file in and include them as units."""
