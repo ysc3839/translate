@@ -153,6 +153,7 @@ class rcfile(base.TranslationStore):
         BLOCKS_RE = re.compile("""
                          (?:
                          LANGUAGE\s+[^\n]*|                              # Language details
+                         \#[^\n]*|                                       # Preprocessing directives
                          /\*.*?\*/[^\n]*|                                      # Comments
                          \/\/[^\n\r]*|                                  # One line comments
                          (?:[0-9A-Z_]+\s+(?:MENU|DIALOG|DIALOGEX|TEXTINCLUDE)|STRINGTABLE)\s  # Translatable section or include text (visual studio)
