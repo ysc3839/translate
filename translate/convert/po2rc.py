@@ -57,12 +57,10 @@ class rerc(object):
                     rcstring = unit.target
                     if len(rcstring.strip()) == 0:
                         rcstring = unit.source
-                    self.inputdict[location] = rc.escape_to_rc(rcstring).encode(self.charset)
+                    self.inputdict[location] = rc.escape_to_rc(rcstring)
 
     def convertblock(self, block):
         newblock = block
-        if isinstance(newblock, six.text_type):
-            newblock = newblock.encode('utf-8')
         if newblock.startswith("LANGUAGE"):
             return "LANGUAGE %s, %s" % (self.lang, self.sublang)
         for unit in self.templatestore.units:
@@ -72,8 +70,6 @@ class rerc(object):
                     newmatch = unit.match.group().replace(unit.match.groupdict()['value'],
                                                           self.inputdict[location])
                     newblock = newblock.replace(unit.match.group(), newmatch)
-        if isinstance(newblock, six.text_type):
-            newblock = newblock.encode(self.charset)
         return newblock
 
 
@@ -92,6 +88,7 @@ def convertrc(inputfile, outputfile, templatefile, includefuzzy=False,
     else:
         convertor = rerc(templatefile, charset, lang, sublang)
     outputrclines = convertor.convertstore(inputstore, includefuzzy)
+    outputrclines = [line.encode(charset) for line in outputrclines]
     outputfile.writelines(outputrclines)
     return 1
 
